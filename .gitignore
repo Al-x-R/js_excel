@@ -4,3 +4,5 @@
 /dist/
 # don't ignore .gitignore
 !.gitignore
+!.eslintrc
+!.eslintignore

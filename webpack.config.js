@@ -9,6 +9,21 @@ const isDev = !isProd
 
 const fileName = ext => isDev ? `bundle.${ext}` : `bundle.[hash].${ext}`
 
+const jsLoaders = () => {
+    const loaders = [
+        {
+            loader: 'babel-loader',
+            options: {
+                presets: ['@babel/preset-env'],
+            }
+        }
+    ]
+    if (isDev) {
+        loaders.push('eslint-loader')
+    }
+    return loaders
+}
+
 console.log('IS PROD', isProd)
 console.log('IS DEV', isDev)
 
@@ -18,7 +33,7 @@ module.exports = {
     entry: ['@babel/polyfill', './index.js'],
     output: {
         filename: fileName('js'),
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
     },
     resolve: {
         extensions: ['.js'],
@@ -38,19 +53,19 @@ module.exports = {
             template: 'index.html',
             minify: {
                 removeComment: isProd,
-                collapseWhitespace: isProd
+                collapseWhitespace: isProd,
             }
         }),
         new CopyPlugin({
             patterns: [
                 {
                     from: path.resolve(__dirname, 'src/favicon.ico'),
-                    to: path.resolve(__dirname, 'dist')
+                    to: path.resolve(__dirname, 'dist'),
                 }
             ],
         }),
         new MiniCssExtractPlugin({
-            filename: fileName('css')
+            filename: fileName('css'),
         })
     ],
     module: {
@@ -62,7 +77,7 @@ module.exports = {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
                             hmr: isDev,
-                            reloadAll: true
+                            reloadAll: true,
                         }
                     },
                     'css-loader',
@@ -72,12 +87,7 @@ module.exports = {
             {
                 test: /\.m?js$/,
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
+                use: jsLoaders(),
             }
         ],
     }
